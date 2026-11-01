@@ -1,5 +1,6 @@
 package com.example.taskmanager.controller;
 
+import com.example.taskmanager.dto.EmployeeResponse;
 import com.example.taskmanager.entity.Employee;
 import com.example.taskmanager.entity.Role;
 import com.example.taskmanager.security.JwtUtil;
@@ -29,9 +30,9 @@ public class AuthController {
     private EmployeeService employeeService;
 
     @PostMapping("/register")
-    public ResponseEntity<Employee> register(@Valid @RequestBody Employee employee) {
+    public ResponseEntity<EmployeeResponse> register(@Valid @RequestBody Employee employee) {
         employee.setRole(Role.EMPLOYEE);
-        return ResponseEntity.ok(employeeService.createEmployee(employee));
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.createEmployee(employee)));
     }
 
     @PostMapping("/login")
