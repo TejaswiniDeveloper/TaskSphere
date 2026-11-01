@@ -8,7 +8,8 @@ A role-based REST API for managing employees and their tasks, built with Spring 
 - Role-based access control (`ADMIN` and `EMPLOYEE`) using Spring Security method security (`@PreAuthorize`)
 - Employee and Task CRUD with a Hibernate One-to-Many relationship
 - Ownership check: an employee can only update the status of their own tasks
-- Centralized error handling that returns clean JSON for 404, 403 and validation errors
+- Centralized error handling that returns clean JSON for 400, 403, 404 and 409 errors, without leaking internal details
+- Swagger / OpenAPI documentation with JWT bearer authentication
 - Input validation with Jakarta Bean Validation
 - Passwords are never returned in API responses
 
@@ -48,6 +49,19 @@ Send the token as `Authorization: Bearer <token>`.
 | DELETE | `/api/tasks/{id}` | ADMIN |
 
 Task status values: `PENDING`, `IN_PROGRESS`, `COMPLETED`.
+
+## API Documentation (Swagger)
+
+Start the app and open **http://localhost:8080/swagger-ui.html** to browse every endpoint and try it from the browser.
+
+To call a protected endpoint:
+
+1. Open `POST /api/auth/login`, click **Try it out**, enter an email and password, and click **Execute**.
+2. Copy the `token` value from the response.
+3. Click **Authorize** at the top of the page, paste the token, and confirm.
+4. Try any endpoint. Swagger sends the token with every request.
+
+The raw OpenAPI definition is available at `/v3/api-docs`.
 
 ## Getting Started
 
@@ -91,7 +105,6 @@ Planned, not built yet:
 
 - DTO layer for responses
 - Unit and integration tests
-- Swagger / OpenAPI documentation
 - Split into microservices (Employee Service, Task Service) with an API gateway and service discovery
 - Docker and deployment on AWS (RDS, EC2, S3, SES)
 
