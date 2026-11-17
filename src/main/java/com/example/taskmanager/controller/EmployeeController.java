@@ -1,15 +1,15 @@
 package com.example.taskmanager.controller;
 
 import com.example.taskmanager.dto.EmployeeResponse;
+import com.example.taskmanager.dto.PageResponse;
 import com.example.taskmanager.entity.Employee;
 import com.example.taskmanager.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -25,11 +25,11 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
-        List<EmployeeResponse> employees = employeeService.getAllEmployees().stream()
-                .map(EmployeeResponse::from)
-                .toList();
-        return ResponseEntity.ok(employees);
+    public ResponseEntity<PageResponse<EmployeeResponse>> getAllEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<EmployeeResponse> result = employeeService.getEmployees(page, size).map(EmployeeResponse::from);
+        return ResponseEntity.ok(PageResponse.from(result));
     }
 
     @GetMapping("/{id}")
