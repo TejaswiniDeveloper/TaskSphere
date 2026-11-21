@@ -8,14 +8,16 @@ A role-based REST API for managing employees and their tasks, built with Spring 
 - Role-based access control (`ADMIN` and `EMPLOYEE`) using Spring Security method security (`@PreAuthorize`)
 - Employee and Task CRUD with a Hibernate One-to-Many relationship
 - Ownership check: an employee can only update the status of their own tasks
+- Paginated list endpoints (`?page=0&size=10`, size capped at 50)
+- Response DTOs: employee responses never include passwords or nested task lists
 - Centralized error handling that returns clean JSON for 400, 403, 404 and 409 errors, without leaking internal details
-- Swagger / OpenAPI documentation with JWT bearer authentication
 - Input validation with Jakarta Bean Validation
-- Passwords are never returned in API responses
+- Swagger / OpenAPI documentation with JWT bearer authentication
+- Unit tests for the service layer with JUnit 5 and Mockito (no database needed)
 
 ## Tech Stack
 
-Java 17, Spring Boot 4.1.1, Spring Security, Spring Data JPA (Hibernate), MySQL 8, JWT (jjwt 0.13.0), Maven, Lombok
+Java 17, Spring Boot 4.1.1, Spring Security, Spring Data JPA (Hibernate), MySQL 8, JWT (jjwt 0.13.0), springdoc-openapi (Swagger UI), JUnit 5, Mockito, Maven, Lombok
 
 ## Access Rules
 
@@ -36,15 +38,16 @@ Send the token as `Authorization: Bearer <token>`.
 |---|---|---|
 | POST | `/api/auth/register` | Public. Always creates an `EMPLOYEE` |
 | POST | `/api/auth/login` | Public. Returns a JWT |
-| GET | `/api/employees` | Logged in |
+| GET | `/api/employees?page=0&size=10` | Logged in. Paginated |
 | GET | `/api/employees/{id}` | Logged in |
 | POST | `/api/employees` | ADMIN |
 | PUT | `/api/employees/{id}` | ADMIN |
 | DELETE | `/api/employees/{id}` | ADMIN |
+| GET | `/api/tasks?page=0&size=10` | ADMIN. Paginated |
 | GET | `/api/tasks/my` | Logged in. Returns only your tasks |
 | PATCH | `/api/tasks/{id}/status` | Assignee only. Body: `{"status": "IN_PROGRESS"}` |
 | POST | `/api/tasks` | ADMIN |
-| GET | `/api/tasks`, `/api/tasks/{id}`, `/api/tasks/employee/{employeeId}` | ADMIN |
+| GET | `/api/tasks/{id}`, `/api/tasks/employee/{employeeId}` | ADMIN |
 | PUT | `/api/tasks/{id}` | ADMIN |
 | DELETE | `/api/tasks/{id}` | ADMIN |
 
@@ -85,13 +88,23 @@ Registration always creates an `EMPLOYEE`, and creating employees needs an admin
    ```
 3. Log in with `POST /api/auth/login` to get a token.
 
+## Running the Tests
+
+The service-layer unit tests use Mockito and need no database:
+
+```
+.\mvnw.cmd test -Dtest="EmployeeServiceTest,TaskServiceTest"
+```
+
+Running plain `mvnw test` also runs the application-context test, which needs MySQL running.
+
 ## Project Structure
 
 ```
 com.example.taskmanager
-  config/       Security configuration
+  config/       Security and OpenAPI configuration
   controller/   REST controllers
-  dto/          Request objects
+  dto/          Request and response objects
   entity/       JPA entities and enums
   exception/    Custom exception and global handler
   repository/   Spring Data JPA repositories
@@ -103,8 +116,8 @@ com.example.taskmanager
 
 Planned, not built yet:
 
-- DTO layer for responses
-- Unit and integration tests
+- Response DTOs for tasks
+- Integration tests for controllers and repositories
 - Split into microservices (Employee Service, Task Service) with an API gateway and service discovery
 - Docker and deployment on AWS (RDS, EC2, S3, SES)
 
