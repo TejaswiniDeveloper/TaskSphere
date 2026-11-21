@@ -6,6 +6,9 @@ import com.example.taskmanager.entity.Task;
 import com.example.taskmanager.entity.TaskStatus;
 import com.example.taskmanager.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,12 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public Page<Task> getTasks(int page, int size) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        return taskRepository.findAll(PageRequest.of(safePage, safeSize, Sort.by("id")));
     }
 
     public Task getTaskById(Long id) {

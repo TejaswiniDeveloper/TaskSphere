@@ -1,5 +1,6 @@
 package com.example.taskmanager.controller;
 
+import com.example.taskmanager.dto.PageResponse;
 import com.example.taskmanager.dto.StatusUpdateRequest;
 import com.example.taskmanager.entity.Task;
 import com.example.taskmanager.service.TaskService;
@@ -26,8 +27,10 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        return ResponseEntity.ok(taskService.getAllTasks());
+    public ResponseEntity<PageResponse<Task>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(PageResponse.from(taskService.getTasks(page, size)));
     }
 
     @PreAuthorize("isAuthenticated()")
