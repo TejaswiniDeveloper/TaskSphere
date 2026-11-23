@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run unit tests
+        run: |
+          chmod +x mvnw
+          ./mvnw -B test -Dtest="EmployeeServiceTest,TaskServiceTest"
+
+      - name: Build Docker image
+        run: docker build -t tasksphere:ci .
