@@ -1,5 +1,7 @@
 # TaskSphere: Employee Task Management REST API
 
+[![CI](https://github.com/TejaswiniDeveloper/TaskSphere/actions/workflows/ci.yml/badge.svg)](https://github.com/TejaswiniDeveloper/TaskSphere/actions/workflows/ci.yml)
+
 A role-based REST API for managing employees and their tasks, built with Spring Boot, Hibernate and MySQL. Admins manage people and assign work. Employees see and update only their own tasks. Authentication uses JWT.
 
 ## Features
@@ -14,6 +16,7 @@ A role-based REST API for managing employees and their tasks, built with Spring 
 - Input validation with Jakarta Bean Validation
 - Swagger / OpenAPI documentation with JWT bearer authentication
 - Unit tests for the service layer with JUnit 5 and Mockito (no database needed)
+- Multi-stage Dockerfile and a GitHub Actions pipeline that runs the unit tests and builds the Docker image on every push
 
 ## Tech Stack
 
@@ -119,7 +122,7 @@ Planned, not built yet:
 - Response DTOs for tasks
 - Integration tests for controllers and repositories
 - Split into microservices (Employee Service, Task Service) with an API gateway and service discovery
-- Docker and deployment on AWS (RDS, EC2, S3, SES)
+- Deployment on AWS (RDS, EC2, S3, SES)
 
 ## Author
 
